@@ -28,6 +28,16 @@
 
 <br />
 <br />
+
+@if (TempData["$AlertMessage$"] != null)
+{
+    <div class="alert alert-danger">@TempData["$AlertMessage$"]</div>
+}
+@if (ViewBag.ErroMessage != null)
+{
+    <div class="alert alert-danger">@ViewBag.ErroMessage</div>
+}
+
 <table class="table">
     <thead>
         <tr>

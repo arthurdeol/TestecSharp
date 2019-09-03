@@ -61,7 +61,7 @@ namespace CSharpTest.Controllers
                     }
                     else
                     {
-                        TempData["$AlertMessage$"] = "Número de chassi já existente, veículo não inserido.";
+                        ViewBag.ErroMessage = "Número de chassi já existente, veículo não inserido.";
                     }
 
                 }
