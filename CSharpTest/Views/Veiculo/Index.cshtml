@@ -1,0 +1,121 @@
+﻿
+@model IEnumerable<CSharpTest.Models.Veiculo>
+@{
+    ViewData["Title"] = "Gerenciandor de Veiculos";
+}
+<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" rel="stylesheet">
+
+<h2>Meus Veículos</h2>
+<br />
+<div>
+    <div style="float:left">
+        <button class="btn btn-primary" onclick="AddEditVeiculo(0)">Adicionar Veiculo</button>
+    </div>
+    <div style="float:right; width:70%;">
+        <form asp-controller="Veiculo" asp-action="Index" class="form-group">
+            <div class="col-sm-6" style="display: flex;">
+                <input class="form-control" type="text" name="chassi" placeholder="Procurar">
+                <button style="float:right;margin-left: 10px;" type="submit" class="btn btn-default btn-info">Filtrar</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<br />
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.IdVeiculo)</th>
+            <th>@Html.DisplayNameFor(model => model.Chassi)</th>
+            <th>@Html.DisplayNameFor(model => model.Passageiros)</th>
+            <th>@Html.DisplayNameFor(model => model.Cor)</th>
+            <th>Action Item</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.IdVeiculo)</td>
+                <td>@Html.DisplayFor(modelItem => item.Chassi)</td>
+                <td>@Html.DisplayFor(modelItem => item.Passageiros)</td>
+                <td>@Html.DisplayFor(modelItem => item.Cor)</td>
+                <td>
+                    <button class="btn btn-default" onclick="AddEditVeiculo(@item.IdVeiculo)">Editar</button>
+                    <button class="btn btn-danger" onclick="DeleteVeiculo(@item.IdVeiculo)">Deletar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="modal fade" id="despesaFormModel" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="#" class="close" data-dismiss="modal">×</a>
+                <h3 id="title" class="modal-title">Adicionar Veiculo</h3>
+            </div>
+            <div class="modal-body" id="despesaFormModelDiv">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var AddEditVeiculo = function (itemId) {
+        var url = "/Veiculo/AddEditVeiculo?itemId=" + itemId;
+        if (itemId > 0)
+            $('#title').html("Edita Veiculo");
+        $("#despesaFormModelDiv").load(url, function () {
+            $("#despesaFormModel").modal("show");
+
+            if (itemId > 0) {
+                $("#Chassi").attr("disabled", "disabled");
+                $("#Passageiros").attr("disabled", "disabled");
+            }
+            else {
+                $("#Chassi").removeAttr("disabled");
+                $("#Passageiros").removeAttr("disabled");
+            }
+
+        });
+    }
+
+    var DeleteVeiculo = function (itemId) {
+        var resp = confirm("Deseja deletar o veículo : " + itemId);
+        if (resp) {
+            $.ajax({
+                type: "POST",
+                url: "/Veiculo/Delete/" + itemId,
+                success: function () {
+                    window.location.href = "/Veiculo/Index";
+                }
+            })
+        }
+    }
+</script>
+<script>
+    $('body').on('click', "#btnSubmit", function () {
+        var myformdata = $("#despesaForm").serialize();
+        $.ajax({
+            type: "POST",
+            url: "/Veiculo/Create",
+            data: myformdata,
+            success: function () {
+                $("#myModal").modal("hide");
+                window.location.href = "/Veiculo/Index";
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        })
+    })
+</script>
